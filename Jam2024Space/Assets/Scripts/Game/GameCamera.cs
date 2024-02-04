@@ -52,5 +52,15 @@ public class GameCamera : MonoBehaviour
         {
             m_CurrentOffset -= (m_TargetToFollow.transform.position - transform.position).normalized * m_ZoomStep;
         }
+
+        if ((m_TargetToFollow.transform.position + m_CurrentOffset).magnitude < m_MinCameraDistance)
+        {
+            m_CurrentOffset = ((m_TargetToFollow.transform.position + m_CurrentOffset) - m_TargetToFollow.transform.position).normalized * m_MinCameraDistance;
+        }
+
+        if ((m_TargetToFollow.transform.position + m_CurrentOffset).magnitude > m_MaxCameraDistance)
+        {
+            m_CurrentOffset = ((m_TargetToFollow.transform.position + m_CurrentOffset) - m_TargetToFollow.transform.position).normalized * m_MaxCameraDistance;
+        }
     }
 }
