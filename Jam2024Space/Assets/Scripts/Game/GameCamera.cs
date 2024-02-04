@@ -16,20 +16,24 @@ public class GameCamera : MonoBehaviour
     [SerializeField]
     private float m_MaxCameraDistance = 5f;
 
-    private Vector3 m_BaseOffset = Vector3.zero;
-    private Vector3 m_CurrentOffset = Vector3.zero;
+    [SerializeField]
+    private float m_DistanceY = 5f;
 
+    [SerializeField]
+    private float m_DistanceZ = 5f;
+
+    private Vector3 m_CurrentOffset = Vector3.zero;
 
 
     private void Start()
     {
-        m_BaseOffset = transform.position - m_TargetToFollow.transform.position;
-        m_CurrentOffset = m_BaseOffset;
+        m_CurrentOffset = new Vector3(0, m_DistanceY, -m_DistanceZ);
     }
 
     private void LateUpdate()
     {
-        transform.position = m_TargetToFollow.transform.position + m_CurrentOffset;
+        transform.position = m_TargetToFollow.transform.position + m_TargetToFollow.transform.forward * m_CurrentOffset.z + m_TargetToFollow.transform.up * m_CurrentOffset.y;
+        transform.LookAt(m_TargetToFollow.transform);
     }
 
     private void Update()
@@ -41,16 +45,12 @@ public class GameCamera : MonoBehaviour
     {
         if (InputManager.ZoomIn)
         {
-            m_CurrentOffset /= (1 + m_ZoomStep);
-            if (m_CurrentOffset.magnitude < m_MinCameraDistance)
-            {
-                m_CurrentOffset = m_CurrentOffset.normalized * m_MinCameraDistance;
-            }
+            m_CurrentOffset += (m_TargetToFollow.transform.position - transform.position).normalized * m_ZoomStep;
         }
-        
+
         if (InputManager.ZoomOut)
         {
-            m_CurrentOffset = Vector3.ClampMagnitude(m_CurrentOffset * (1 + m_ZoomStep), m_MaxCameraDistance);
+            m_CurrentOffset -= (m_TargetToFollow.transform.position - transform.position).normalized * m_ZoomStep;
         }
     }
 }
