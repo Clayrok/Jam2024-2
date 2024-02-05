@@ -633,6 +633,50 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: baseSpeed
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4593755400707491483, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_Layer
       value: 7

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CapsuleController : MonoBehaviour
 {
@@ -18,7 +19,10 @@ public class CapsuleController : MonoBehaviour
 
     [SerializeField]
     private float baseSpeed = 5f;
-    
+
+    [SerializeField]
+    private AnimationCurve m_AccelerationCurve;
+
     [SerializeField]
     private float actionDuration = 2f;
     
@@ -45,6 +49,8 @@ public class CapsuleController : MonoBehaviour
     private bool s_IsControllerActive = true;
 
     private Pickable m_PickedObject = null;
+
+    private float m_AccelerationTime = 0f;
 
 
     void Start()
@@ -76,14 +82,26 @@ public class CapsuleController : MonoBehaviour
 
         Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized;
 
+        if (movement.sqrMagnitude > 0)
+        {
+            m_AccelerationTime += Time.deltaTime;
+        }
+        else
+        {
+            m_AccelerationTime = 0f;
+        }
+
         if (Physics.BoxCast(transform.position, transform.localScale / 2f, movement, out RaycastHit hitInfo, transform.rotation, 0.1f, ~(LayerMask.GetMask("Player"))))
         {
-            movement -= hitInfo.normal;
+            movement = Vector3.zero;
         }
 
         Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, GameManager.Get().GetShip().transform.forward);
         movement = rotation * movement;
-        transform.Translate(movement * m_CurrentSpeed * Time.deltaTime, Space.World);
+
+        float acceleration = m_AccelerationCurve.Evaluate(m_AccelerationTime);
+
+        transform.Translate(movement * acceleration * m_CurrentSpeed * Time.deltaTime, Space.World);
         
         if (movement != Vector3.zero)
         {
@@ -202,10 +220,20 @@ public class CapsuleController : MonoBehaviour
         Receptor closestReceptor = GameManager.Get().GetClosestInteractableInRange<Receptor>(transform.position, m_InteractionRange);
         if (closestReceptor)
         {
-            closestReceptor.TryPlaceInteractable(m_PickedObject);
+            if (closestReceptor.TryPlaceInteractable(m_PickedObject))
+            {
+                m_PickedObject.OnPlacedInReceptor();
+            }
+            else
+            {
+                m_PickedObject.OnDropped();
+            }
+        }
+        else
+        {
+            m_PickedObject.OnDropped();
         }
 
-        m_PickedObject.OnDropped();
         m_PickedObject = null;
 
         m_CurrentSpeed = baseSpeed;

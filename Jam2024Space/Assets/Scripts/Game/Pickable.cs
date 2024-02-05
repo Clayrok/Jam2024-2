@@ -20,6 +20,11 @@ public class Pickable : Interactable
         transform.position = position;
     }
 
+    public void OnPlacedInReceptor()
+    {
+
+    }
+
     public override void Interact()
     {
         
