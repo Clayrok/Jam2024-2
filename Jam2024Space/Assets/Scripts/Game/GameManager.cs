@@ -12,17 +12,62 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameCamera m_Camera = null;
 
+    private List<Interactable> m_Interactables = new List<Interactable>();
 
-    private void Awake()
+
+    public void RegisterInteractable(Interactable _Interactable)
     {
-        if (s_Instance == null)
+        m_Interactables.Add(_Interactable);
+    }
+
+    public Interactable GetClosestInteractable(Vector3 _Position, Interactable _ToExclude = null)
+    {
+        return GetClosestInteractable<Interactable>(_Position, _ToExclude);
+    }
+
+    public T GetClosestInteractable<T>(Vector3 _Position, Interactable _ToExclude = null) where T : Interactable
+    {
+        T closest = null;
+        float shortestDistance = float.PositiveInfinity;
+
+        foreach (Interactable interactable in m_Interactables)
         {
-            s_Instance = this;
+            float sqrMagnitude = Vector3.SqrMagnitude(interactable.transform.position - _Position);
+            if (shortestDistance > sqrMagnitude && (_ToExclude == null || _ToExclude != interactable) && interactable is T)
+            {
+                closest = interactable as T;
+                shortestDistance = sqrMagnitude;
+            }
         }
-        else
+
+        return closest;
+    }
+
+    public List<Interactable> GetInteractablesInRange(Vector3 _Position, float _Range)
+    {
+        List<Interactable> interactablesInRange = new List<Interactable>();
+
+        foreach (Interactable interactable in m_Interactables)
         {
-            Destroy(this);
+            if (Vector3.Distance(_Position, interactable.transform.position) < _Range)
+            {
+                interactablesInRange.Add(interactable);
+            }
         }
+
+        return interactablesInRange;
+    }
+
+    public T GetClosestInteractableInRange<T>(Vector3 _Position, float _Range) where T : Interactable
+    {
+        T interactable = GetClosestInteractable<T>(_Position);
+
+        if(Vector3.Distance(_Position, interactable.transform.position) < _Range)
+        {
+            return interactable;
+        }
+
+        return null;
     }
 
     public Ship GetShip()

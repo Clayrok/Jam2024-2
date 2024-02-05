@@ -5,9 +5,6 @@ using UnityEngine;
 public class CapsuleController : MonoBehaviour
 {
     [SerializeField]
-    private CharacterController c_characterController;
-
-    [SerializeField]
     private Collider c_FetchRange;
 
     [SerializeField]
@@ -28,6 +25,9 @@ public class CapsuleController : MonoBehaviour
     [SerializeField]
     private float fetchDuration = 1f;
 
+    [SerializeField]
+    private float m_InteractionRange = 1f;
+
     private float m_CurrentSpeed = 5f;
 
     private bool s_hasBattery = false;
@@ -44,14 +44,11 @@ public class CapsuleController : MonoBehaviour
 
     private bool s_IsControllerActive = true;
 
-    private Interactable m_InteractableInRange = null;
-
     private Pickable m_PickedObject = null;
 
 
     void Start()
     {
-        c_characterController = GetComponent<CharacterController>();
         c_rigidbody = GetComponent<Rigidbody>();
         c_FetchRange = GetComponent<BoxCollider>();
 
@@ -74,13 +71,20 @@ public class CapsuleController : MonoBehaviour
 
     void MoveCharacter()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
-        Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized * m_CurrentSpeed * Time.deltaTime;
+        Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized;
 
-        c_characterController.Move(movement);
+        if (Physics.BoxCast(transform.position, transform.localScale / 2f, movement, out RaycastHit hitInfo, transform.rotation, 0.1f, ~(LayerMask.GetMask("Player"))))
+        {
+            movement -= hitInfo.normal;
+        }
 
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, GameManager.Get().GetShip().transform.forward);
+        movement = rotation * movement;
+        transform.Translate(movement * m_CurrentSpeed * Time.deltaTime, Space.World);
+        
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
@@ -88,31 +92,32 @@ public class CapsuleController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent(out Interactable interactable))
-        {
-            m_InteractableInRange = interactable;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (m_InteractableInRange != null && other.gameObject == m_InteractableInRange.gameObject)
-        {
-            m_InteractableInRange = null;
-        }
-    }
-
     private void Interact()
     {
-        if (!m_PickedObject && m_InteractableInRange != null)
-        {
-            m_InteractableInRange.Interact();
+        Interactable closestPrioritaryInteractable = GetPrioritaryInteractableInRange();
 
-            if (m_InteractableInRange is Pickable)
+        if (!closestPrioritaryInteractable)
+        {
+            if (m_PickedObject)
             {
-                PickObject(m_InteractableInRange as Pickable);
+                DropObject();
+            }
+
+            return;
+        }
+
+        closestPrioritaryInteractable.Interact();
+
+        if (!m_PickedObject)
+        {
+            if (closestPrioritaryInteractable is Pickable)
+            {
+                PickObject(closestPrioritaryInteractable as Pickable);
+            }
+
+            if (closestPrioritaryInteractable is Receptor && !(closestPrioritaryInteractable as Receptor).GetIsEmpty())
+            {
+                PickObject((closestPrioritaryInteractable as Receptor).TakeInteractable() as Pickable);
             }
         }
         else
@@ -121,9 +126,58 @@ public class CapsuleController : MonoBehaviour
         }
     }
 
+    private Interactable GetPrioritaryInteractableInRange()
+    {
+        Interactable prioritaryInteractable = null;
+        List<Interactable> interactablesInRange = GameManager.Get().GetInteractablesInRange(transform.position, m_InteractionRange);
+
+        if (m_PickedObject)
+        {
+            prioritaryInteractable = GetClosestInteractableOfType<Receptor>(interactablesInRange);
+        }
+        else
+        {
+            prioritaryInteractable = GetClosestInteractableOfType<Receptor>(interactablesInRange, (Receptor _Receptor) =>
+            {
+                return !_Receptor.GetIsEmpty();
+            });
+
+            if (!prioritaryInteractable)
+            {
+                prioritaryInteractable = GetClosestInteractableOfType<Pickable>(interactablesInRange);
+            }
+
+            if (!prioritaryInteractable)
+            {
+                prioritaryInteractable = GetClosestInteractableOfType<Interactable>(interactablesInRange);
+            }
+        }
+
+        return prioritaryInteractable;
+    }
+
+    private T GetClosestInteractableOfType<T>(List<Interactable> _Interactables, System.Func<T, bool> _Condition = null) where T : Interactable
+    {
+        T closestInteractable = null;
+        float shortestSqrMagnitude = float.PositiveInfinity;
+
+        foreach (Interactable interactable in _Interactables)
+        {
+            float sqrMagnitude = (interactable.transform.position - transform.position).sqrMagnitude;
+            if (interactable is T && sqrMagnitude < shortestSqrMagnitude && (_Condition == null || _Condition.Invoke(interactable as T)))
+            {
+                closestInteractable = interactable as T;
+                shortestSqrMagnitude = sqrMagnitude;
+            }
+        }
+
+        return closestInteractable;
+    }
+
     private void PickObject(Pickable _Object)
     {
         m_PickedObject = _Object;
+        _Object.OnPicked();
 
         if (m_PickedObject.TryGetComponent(out Collider collider))
         {
@@ -145,11 +199,13 @@ public class CapsuleController : MonoBehaviour
             collider.isTrigger = false;
         }
 
-        if (m_InteractableInRange is BatteryReceptor && m_PickedObject is Battery)
+        Receptor closestReceptor = GameManager.Get().GetClosestInteractableInRange<Receptor>(transform.position, m_InteractionRange);
+        if (closestReceptor)
         {
-            ((BatteryReceptor)m_InteractableInRange).PlaceBattery(m_PickedObject as Battery);
+            closestReceptor.TryPlaceInteractable(m_PickedObject);
         }
 
+        m_PickedObject.OnDropped();
         m_PickedObject = null;
 
         m_CurrentSpeed = baseSpeed;
@@ -164,5 +220,10 @@ public class CapsuleController : MonoBehaviour
 
         m_PickedObject.transform.position = fetchPosition.transform.position;
         m_PickedObject.transform.rotation = fetchPosition.transform.rotation;
+    }
+
+    private bool IsInteractableInRange(Interactable _Interactable)
+    {
+        return Vector3.Distance(_Interactable.transform.position, transform.position) < m_InteractionRange;
     }
 }

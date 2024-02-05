@@ -2,21 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BatteryReceptor : Interactable
+public class BatteryReceptor : Receptor
 {
-    [SerializeField]
-    private GameObject m_BatteryPoint  = null;
-
-    private Battery m_Battery = null;
-
     private float m_PowerConsumption = 0f;
 
 
     private void Update()
     {
-        if (m_Battery != null)
+        Battery battery = GetPlacedInteractable<Battery>();
+        if (battery)
         {
-            m_Battery.Drain(m_PowerConsumption * Time.deltaTime);
+            battery.Drain(m_PowerConsumption * Time.deltaTime);
         }
     }
 
@@ -25,39 +21,14 @@ public class BatteryReceptor : Interactable
         
     }
 
-    public void PlaceBattery(Battery _Battery)
-    {
-        m_Battery = _Battery;
-
-        if (m_Battery.TryGetComponent(out Rigidbody rigidbody))
-        {
-            rigidbody.isKinematic = true;
-        }
-
-        m_Battery.transform.position = m_BatteryPoint.transform.position;
-        m_Battery.transform.rotation = m_BatteryPoint.transform.rotation;
-    }
-
-    public Battery TakeBattery()
-    {
-        if (!m_Battery)
-        {
-            return null;
-        }
-
-        if (m_Battery.TryGetComponent(out Rigidbody rigidbody))
-        {
-            rigidbody.isKinematic = false;
-        }
-
-        Battery battery = m_Battery;
-        m_Battery = null;
-
-        return battery;
-    }
-
     public bool GetIsPowered()
     {
-        return m_Battery != null && m_Battery.GetHasPower();
+        Battery battery = GetPlacedInteractable<Battery>();
+        return battery && battery.GetHasPower();
+    }
+
+    public override bool GetIsInteractableCompatible(Interactable _Interactable)
+    {
+        return _Interactable is Battery;
     }
 }

@@ -9,6 +9,15 @@ public class Ship : MonoBehaviour
     private MeshRenderer m_SkyMeshRenderer = null;
 
     [SerializeField]
+    private BatteryReceptor m_LeftThrusterBatteryReceptor = null;
+
+    [SerializeField]
+    private BatteryReceptor m_CentralThrusterBatteryReceptor = null;
+
+    [SerializeField]
+    private BatteryReceptor m_RightThrusterBatteryReceptor = null;
+
+    [SerializeField]
     private float m_LinearThrustersStrength = 6f;
 
     [SerializeField]
@@ -21,8 +30,6 @@ public class Ship : MonoBehaviour
     private float m_MaxVelocity = 10f;
 
     private Rigidbody m_Rigidbody = null;
-
-    private Vector3 m_CurrentVelocity = Vector3.zero;
 
     private bool m_IsCentralThrusterActivated = false;
     private bool m_IsLeftThrusterActivated = false;
@@ -37,7 +44,7 @@ public class Ship : MonoBehaviour
 
     private void Update()
     {
-        UpdateInputs();
+        UpdateThrusters();
         UpdateSky();
     }
 
@@ -49,11 +56,11 @@ public class Ship : MonoBehaviour
         DampDownVelocity();
     }
 
-    private void UpdateInputs()
+    private void UpdateThrusters()
     {
-        m_IsCentralThrusterActivated = InputManager.Forward;
-        m_IsLeftThrusterActivated = InputManager.Left;
-        m_IsRightThrusterActivated= InputManager.Right;
+        m_IsLeftThrusterActivated = m_LeftThrusterBatteryReceptor.GetIsPowered();
+        m_IsCentralThrusterActivated = m_CentralThrusterBatteryReceptor.GetIsPowered();
+        m_IsRightThrusterActivated= m_RightThrusterBatteryReceptor.GetIsPowered();
     }
 
     private void UpdateLinearVelocity()
@@ -61,6 +68,7 @@ public class Ship : MonoBehaviour
         Vector3 linearVelocity = m_Rigidbody.velocity;
         linearVelocity += m_IsCentralThrusterActivated || (m_IsLeftThrusterActivated && m_IsRightThrusterActivated) ? transform.forward * m_LinearThrustersStrength * Time.deltaTime : Vector3.zero;
         linearVelocity = Vector3.ClampMagnitude(linearVelocity, m_MaxVelocity);
+        linearVelocity.y = 0;
         m_Rigidbody.velocity = linearVelocity;
     }
 
@@ -70,6 +78,8 @@ public class Ship : MonoBehaviour
         angularVelocity += m_IsLeftThrusterActivated && !m_IsRightThrusterActivated ? transform.up * m_AgularThrustersStrength * Time.deltaTime : Vector3.zero;
         angularVelocity += m_IsRightThrusterActivated && !m_IsLeftThrusterActivated ? -transform.up * m_AgularThrustersStrength * Time.deltaTime : Vector3.zero;
         angularVelocity = Vector3.ClampMagnitude(angularVelocity, m_MaxVelocity);
+        angularVelocity.x = 0;
+        angularVelocity.z = 0;
         m_Rigidbody.angularVelocity = angularVelocity;
     }
 
