@@ -9,6 +9,9 @@ public abstract class Receptor : Interactable
 
     private Interactable m_PlacedInteractable = null;
 
+    private bool m_IsInteractedKinematicWhenPlaced = false;
+
+
     public bool TryPlaceInteractable(Interactable _Interactable)
     {
         if (!GetIsInteractableCompatible(_Interactable))
@@ -20,6 +23,7 @@ public abstract class Receptor : Interactable
 
         if (_Interactable.TryGetComponent(out Rigidbody rigidbody))
         {
+            m_IsInteractedKinematicWhenPlaced = rigidbody.isKinematic;
             rigidbody.isKinematic = true;
         }
 
@@ -38,7 +42,7 @@ public abstract class Receptor : Interactable
 
         if (m_PlacedInteractable.TryGetComponent(out Rigidbody rigidbody))
         {
-            rigidbody.isKinematic = false;
+            rigidbody.isKinematic = m_IsInteractedKinematicWhenPlaced;
         }
 
         Interactable interactable = m_PlacedInteractable;

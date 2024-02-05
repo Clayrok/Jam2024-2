@@ -220,20 +220,17 @@ public class CapsuleController : MonoBehaviour
         Receptor closestReceptor = GameManager.Get().GetClosestInteractableInRange<Receptor>(transform.position, m_InteractionRange);
         if (closestReceptor)
         {
-            if (closestReceptor.TryPlaceInteractable(m_PickedObject))
+            if (!closestReceptor.TryPlaceInteractable(m_PickedObject))
             {
-                m_PickedObject.OnPlacedInReceptor();
-            }
-            else
-            {
-                m_PickedObject.OnDropped();
+                PlacePickableOnFloor(m_PickedObject);
             }
         }
         else
         {
-            m_PickedObject.OnDropped();
+            PlacePickableOnFloor(m_PickedObject);
         }
 
+        m_PickedObject.OnDropped();
         m_PickedObject = null;
 
         m_CurrentSpeed = baseSpeed;
@@ -248,6 +245,17 @@ public class CapsuleController : MonoBehaviour
 
         m_PickedObject.transform.position = fetchPosition.transform.position;
         m_PickedObject.transform.rotation = fetchPosition.transform.rotation;
+    }
+
+    private void PlacePickableOnFloor(Pickable _Pickable)
+    {
+        MeshRenderer playerMeshRenderer = GetComponent<MeshRenderer>();
+        MeshRenderer pickableMeshRenderer = _Pickable.GetComponent<MeshRenderer>();
+
+        Vector3 feetPosition = transform.position + Vector3.down * (playerMeshRenderer.bounds.extents.y);
+        float pickableHalfHeight = pickableMeshRenderer.bounds.extents.y;
+
+        _Pickable.transform.position = feetPosition + Vector3.up * pickableHalfHeight;
     }
 
     private bool IsInteractableInRange(Interactable _Interactable)

@@ -15,14 +15,7 @@ public class Pickable : Interactable
 
     public void OnDropped()
     {
-        Vector3 position = transform.position;
-        position.y = m_PosY;
-        transform.position = position;
-    }
-
-    public void OnPlacedInReceptor()
-    {
-
+        
     }
 
     public override void Interact()

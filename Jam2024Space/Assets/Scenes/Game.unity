@@ -629,57 +629,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 26014867512757205}
     m_Modifications:
-    - target: {fileID: 1529393541711271119, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: baseSpeed
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].time
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].value
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].inSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].inSlope
-      value: 0
+      value: 36.980442
       objectReference: {fileID: 0}
     - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].outSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].outSlope
-      value: 0
+      value: 36.980442
       objectReference: {fileID: 0}
     - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].outWeight
-      value: 0
+      value: 0.028380632
       objectReference: {fileID: 0}
     - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].tangentMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1641619301881601042, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_AccelerationCurve.m_Curve.Array.data[1].tangentMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4593755400707491483, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_Layer
-      value: 7
+      propertyPath: m_AccelerationCurve.m_Curve.Array.data[0].weightedMode
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4713258780747924840, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_LocalScale.x
@@ -740,10 +704,6 @@ PrefabInstance:
     - target: {fileID: 7445873211406357892, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
       propertyPath: m_Layer
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8745327182392200787, guid: f072144337f6eec4b8f1ce750ffe0164, type: 3}
-      propertyPath: m_IncludeLayers.m_Bits
-      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
