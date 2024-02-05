@@ -32,8 +32,11 @@ public class GameCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position = m_TargetToFollow.transform.position + m_TargetToFollow.transform.forward * m_CurrentOffset.z + m_TargetToFollow.transform.up * m_CurrentOffset.y;
-        transform.LookAt(m_TargetToFollow.transform);
+        Vector3 offset = m_CurrentOffset;
+        offset = Quaternion.FromToRotation(Vector3.forward, m_TargetToFollow.transform.forward) * offset;
+
+        transform.position = m_TargetToFollow.transform.position + offset;
+        transform.forward = m_TargetToFollow.transform.position - transform.position;
     }
 
     private void Update()
@@ -45,22 +48,24 @@ public class GameCamera : MonoBehaviour
     {
         if (InputManager.ZoomIn)
         {
-            m_CurrentOffset += (m_TargetToFollow.transform.position - transform.position).normalized * m_ZoomStep;
+            m_CurrentOffset /= m_ZoomStep;
+            Debug.Log(m_CurrentOffset.magnitude);
         }
 
         if (InputManager.ZoomOut)
         {
-            m_CurrentOffset -= (m_TargetToFollow.transform.position - transform.position).normalized * m_ZoomStep;
+            m_CurrentOffset *= m_ZoomStep;
+            Debug.Log(m_CurrentOffset.magnitude);
         }
 
-        if ((m_TargetToFollow.transform.position + m_CurrentOffset).magnitude < m_MinCameraDistance)
+        if (m_CurrentOffset.magnitude < m_MinCameraDistance)
         {
-            m_CurrentOffset = ((m_TargetToFollow.transform.position + m_CurrentOffset) - m_TargetToFollow.transform.position).normalized * m_MinCameraDistance;
+            m_CurrentOffset = m_CurrentOffset.normalized * m_MinCameraDistance;
         }
 
-        if ((m_TargetToFollow.transform.position + m_CurrentOffset).magnitude > m_MaxCameraDistance)
+        if (m_CurrentOffset.magnitude > m_MaxCameraDistance)
         {
-            m_CurrentOffset = ((m_TargetToFollow.transform.position + m_CurrentOffset) - m_TargetToFollow.transform.position).normalized * m_MaxCameraDistance;
+            m_CurrentOffset = m_CurrentOffset.normalized * m_MaxCameraDistance;
         }
     }
 }
