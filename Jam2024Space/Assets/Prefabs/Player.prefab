@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6937001837318475068}
   - component: {fileID: 1262336597320207073}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: FetchPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 594684363076453804}
   - component: {fileID: 4303955350867916388}
   - component: {fileID: 1486347951069183243}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: DirectionArrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.12, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6937001837318475068}
@@ -338,3 +338,7 @@ MonoBehaviour:
   actionDuration: 2
   fetchDuration: 1
   m_InteractionRange: 1
+  m_Health: 100
+  m_Hunger: 100
+  m_HungerConsumption: 1
+  m_HungerRefillSpeed: 10

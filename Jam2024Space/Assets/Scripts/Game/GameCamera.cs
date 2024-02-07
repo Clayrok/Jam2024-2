@@ -49,13 +49,11 @@ public class GameCamera : MonoBehaviour
         if (InputManager.ZoomIn)
         {
             m_CurrentOffset /= m_ZoomStep;
-            Debug.Log(m_CurrentOffset.magnitude);
         }
 
         if (InputManager.ZoomOut)
         {
             m_CurrentOffset *= m_ZoomStep;
-            Debug.Log(m_CurrentOffset.magnitude);
         }
 
         if (m_CurrentOffset.magnitude < m_MinCameraDistance)

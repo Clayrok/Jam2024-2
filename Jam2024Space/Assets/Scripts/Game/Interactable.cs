@@ -9,5 +9,5 @@ public abstract class Interactable : MonoBehaviour
         GameManager.Get().RegisterInteractable(this);
     }
 
-    public abstract void Interact();
+    public abstract void Interact(PlayerCharacter _Player);
 }

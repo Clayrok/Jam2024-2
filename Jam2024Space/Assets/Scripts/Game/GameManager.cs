@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
     public static GameManager s_Instance = null;
 
     [SerializeField]
+    private PlayerCharacter m_Character = null;
+
+    [SerializeField]
     private Ship m_Ship = null;
 
     [SerializeField]
@@ -68,6 +71,11 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public PlayerCharacter GetCharacter()
+    {
+        return m_Character;
     }
 
     public Ship GetShip()

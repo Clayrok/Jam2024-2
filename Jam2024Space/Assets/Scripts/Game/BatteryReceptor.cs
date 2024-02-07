@@ -16,7 +16,7 @@ public class BatteryReceptor : Receptor
         }
     }
 
-    public override void Interact()
+    public override void Interact(PlayerCharacter _Player)
     {
         
     }

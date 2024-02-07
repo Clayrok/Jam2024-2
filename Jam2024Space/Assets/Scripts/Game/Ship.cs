@@ -18,10 +18,19 @@ public class Ship : MonoBehaviour
     private BatteryReceptor m_RightThrusterBatteryReceptor = null;
 
     [SerializeField]
+    private BatteryReceptor m_OxygenRefillReceptor = null;
+
+    [SerializeField]
     private float m_LinearThrustersStrength = 6f;
 
     [SerializeField]
     private float m_AgularThrustersStrength = 1f;
+
+    [SerializeField]
+    private float m_AgularThrustersLinearStrength = 3f;
+
+    [SerializeField]
+    private float m_LinearForceLimit = 9f;
 
     [SerializeField]
     private float m_VelocityDampening = 1f;
@@ -29,11 +38,21 @@ public class Ship : MonoBehaviour
     [SerializeField]
     private float m_MaxVelocity = 10f;
 
+    [SerializeField]
+    private float m_OxygenDecreaseSpeed = 1f;
+
+    [SerializeField]
+    private float m_RefillOxygenSpeed = 5f;
+
     private Rigidbody m_Rigidbody = null;
 
     private bool m_IsCentralThrusterActivated = false;
     private bool m_IsLeftThrusterActivated = false;
     private bool m_IsRightThrusterActivated = false;
+
+    private float m_OxygenRemaining = 100f;
+
+    private Vector3? m_DestinationPosition = null;
 
 
     private void Awake()
@@ -46,6 +65,8 @@ public class Ship : MonoBehaviour
     {
         UpdateThrusters();
         UpdateSky();
+        ConsumeOxygen();
+        RefillOxygen();
     }
 
     private void FixedUpdate()
@@ -66,10 +87,23 @@ public class Ship : MonoBehaviour
     private void UpdateLinearVelocity()
     {
         Vector3 linearVelocity = m_Rigidbody.velocity;
-        linearVelocity += m_IsCentralThrusterActivated || (m_IsLeftThrusterActivated && m_IsRightThrusterActivated) ? transform.forward * m_LinearThrustersStrength * Time.deltaTime : Vector3.zero;
+        linearVelocity += transform.forward * CalculateLinearMovementStrength() * Time.deltaTime;
         linearVelocity = Vector3.ClampMagnitude(linearVelocity, m_MaxVelocity);
         linearVelocity.y = 0;
         m_Rigidbody.velocity = linearVelocity;
+    }
+
+    private float CalculateLinearMovementStrength()
+    {
+        float strength = 0f;
+
+        strength += m_IsCentralThrusterActivated ? m_LinearThrustersStrength : 0f;
+        strength += m_IsLeftThrusterActivated && m_IsRightThrusterActivated ? m_LinearThrustersStrength * 2f : 0f;
+        strength += m_IsLeftThrusterActivated || m_IsRightThrusterActivated ? m_AgularThrustersLinearStrength : 0f;
+
+        strength = Mathf.Clamp(strength, 0f, m_LinearForceLimit);
+
+        return strength;
     }
 
     private void UpdateAngularVelocity()
@@ -105,5 +139,43 @@ public class Ship : MonoBehaviour
         offset2D = m_SkyMeshRenderer.material.GetTextureOffset("_MainTex") + offset2D;
 
         m_SkyMeshRenderer.material.SetTextureOffset("_MainTex", offset2D);
+    }
+
+    private void ConsumeOxygen()
+    {
+        m_OxygenRemaining = Mathf.Clamp(m_OxygenRemaining - m_OxygenDecreaseSpeed * Time.deltaTime, 0f, 100f);
+    }
+
+    private void RefillOxygen()
+    {
+        if (m_OxygenRefillReceptor != null & m_OxygenRefillReceptor.GetIsPowered())
+        {
+            m_OxygenRemaining = Mathf.Clamp(m_OxygenRemaining += m_RefillOxygenSpeed * Time.deltaTime, 0f, 100f);
+        }
+    }
+
+    public float GetRemainingOxygen()
+    {
+        return m_OxygenRemaining;
+    }
+
+    public void SetDestinationPosition(Vector3 _Position)
+    {
+        m_DestinationPosition = _Position;
+    }
+
+    public Vector3? GetDestinationPosition()
+    {
+        if (m_DestinationPosition == null)
+        {
+            return null;
+        }
+
+        return m_DestinationPosition.Value;
+    }
+
+    private void Start()
+    {
+        SetDestinationPosition(new Vector3(10, 0, 10));
     }
 }

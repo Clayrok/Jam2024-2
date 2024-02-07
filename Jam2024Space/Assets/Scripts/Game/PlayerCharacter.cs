@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CapsuleController : MonoBehaviour
+public class PlayerCharacter : MonoBehaviour
 {
     [SerializeField]
     private Collider c_FetchRange;
@@ -31,6 +31,18 @@ public class CapsuleController : MonoBehaviour
 
     [SerializeField]
     private float m_InteractionRange = 1f;
+
+    [SerializeField]
+    private float m_Health = 100f;
+
+    [SerializeField]
+    private float m_Hunger = 100f;
+
+    [SerializeField]
+    private float m_HungerConsumption = 1f;
+
+    [SerializeField]
+    private float m_HungerRefillSpeed = 3f;
 
     private float m_CurrentSpeed = 5f;
 
@@ -73,12 +85,13 @@ public class CapsuleController : MonoBehaviour
         }
 
         MovePickedObject();
+        ConsumeHunger();
     }
 
     void MoveCharacter()
     {
-        float verticalInput = Input.GetAxis("Vertical");
-        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
 
         Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized;
 
@@ -91,23 +104,25 @@ public class CapsuleController : MonoBehaviour
             m_AccelerationTime = 0f;
         }
 
-        if (Physics.BoxCast(transform.position, transform.localScale / 2f, movement, out RaycastHit hitInfo, transform.rotation, 0.1f, ~(LayerMask.GetMask("Player"))))
-        {
-            movement = Vector3.zero;
-        }
-
         Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, GameManager.Get().GetShip().transform.forward);
         movement = rotation * movement;
 
         float acceleration = m_AccelerationCurve.Evaluate(m_AccelerationTime);
 
-        transform.Translate(movement * acceleration * m_CurrentSpeed * Time.deltaTime, Space.World);
-        
+        movement = movement * acceleration * m_CurrentSpeed * Time.deltaTime;
+
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, Time.deltaTime * 1000f);
         }
+
+        if (Physics.BoxCast(transform.position, m_Collider.bounds.extents / 2f, movement.normalized, out RaycastHit hitInfo, Quaternion.LookRotation(movement, Vector3.up), movement.magnitude + m_Collider.bounds.extents.z / 2f, ~(LayerMask.GetMask("Player"))))
+        {
+            movement += hitInfo.normal * movement.magnitude;
+        }
+
+        transform.Translate(movement, Space.World);
     }
 
     private void Interact()
@@ -124,7 +139,7 @@ public class CapsuleController : MonoBehaviour
             return;
         }
 
-        closestPrioritaryInteractable.Interact();
+        closestPrioritaryInteractable.Interact(this);
 
         if (!m_PickedObject)
         {
@@ -258,8 +273,33 @@ public class CapsuleController : MonoBehaviour
         _Pickable.transform.position = feetPosition + Vector3.up * pickableHalfHeight;
     }
 
+    private void ConsumeHunger()
+    {
+        m_Hunger = Mathf.Clamp(m_Hunger - m_HungerConsumption * Time.deltaTime, 0f, 100f);
+    }
+
+    public void Feed()
+    {
+        m_Hunger = Mathf.Clamp(m_Hunger + m_HungerRefillSpeed * Time.deltaTime, 0f, 100f);
+    }
+
     private bool IsInteractableInRange(Interactable _Interactable)
     {
         return Vector3.Distance(_Interactable.transform.position, transform.position) < m_InteractionRange;
+    }
+
+    public void Damage(float _Damage)
+    {
+        m_Health = Mathf.Clamp(m_Health - _Damage, 0f, 100f);
+    }
+
+    public float GetRemainingHealth()
+    {
+        return m_Health;
+    }
+
+    public float GetRemainingHunger()
+    {
+        return m_Hunger;
     }
 }
