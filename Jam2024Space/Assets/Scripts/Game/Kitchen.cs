@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Kitchen : Interactable
 {
-    private Vector3 m_InteractionStartShipPosition = Vector3.zero;
-
     private PlayerCharacter m_InteractionPlayer = null;
 
 
@@ -16,19 +14,17 @@ public class Kitchen : Interactable
             return;
         }
 
-        if (m_InteractionStartShipPosition != m_InteractionPlayer.transform.localPosition)
+        if (m_InteractionPlayer.GetIsMoving())
         {
             m_InteractionPlayer = null;
+            return;
         }
-        else
-        {
-            m_InteractionPlayer.Feed();
-        }
+
+        m_InteractionPlayer.Feed();
     }
 
     public override void Interact(PlayerCharacter _Player)
     {
-        m_InteractionStartShipPosition = _Player.transform.localPosition;
         m_InteractionPlayer = _Player;
     }
 }

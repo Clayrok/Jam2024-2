@@ -4,11 +4,13 @@ using UnityEngine;
 
 public static class InputManager
 {
-    public static bool Forward => Input.GetKey(KeyCode.UpArrow);
+    public static bool Forward => Input.GetKey(KeyCode.W);
 
-    public static bool Left => Input.GetKey(KeyCode.LeftArrow);
+    public static bool Backward => Input.GetKey(KeyCode.S);
 
-    public static bool Right => Input.GetKey(KeyCode.RightArrow);
+    public static bool Left => Input.GetKey(KeyCode.A);
+
+    public static bool Right => Input.GetKey(KeyCode.D);
 
     public static bool ZoomIn => Input.GetAxisRaw("Mouse ScrollWheel") > 0;
 

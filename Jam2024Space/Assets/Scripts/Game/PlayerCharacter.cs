@@ -64,6 +64,8 @@ public class PlayerCharacter : MonoBehaviour
 
     private float m_AccelerationTime = 0f;
 
+    private bool m_IsMoving = false;
+
 
     void Start()
     {
@@ -90,8 +92,8 @@ public class PlayerCharacter : MonoBehaviour
 
     void MoveCharacter()
     {
-        float verticalInput = Input.GetAxisRaw("Vertical");
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = (InputManager.Forward ? 1 : 0) + (InputManager.Backward ? -1 : 0);
+        float horizontalInput = (InputManager.Right ? 1 : 0) + (InputManager.Left ? -1 : 0);
 
         Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput).normalized;
 
@@ -123,6 +125,8 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         transform.Translate(movement, Space.World);
+
+        m_IsMoving = movement.sqrMagnitude > 0;
     }
 
     private void Interact()
@@ -301,5 +305,10 @@ public class PlayerCharacter : MonoBehaviour
     public float GetRemainingHunger()
     {
         return m_Hunger;
+    }
+
+    public bool GetIsMoving()
+    {
+        return m_IsMoving;
     }
 }
