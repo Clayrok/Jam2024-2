@@ -75,5 +75,3 @@ crashlytics-build.properties
 [Aa]ssets/[Ll]ocal/
 [Aa]ssets/[Ll]ocal.meta
 *_[Ll]ocal.*
-
-*.meta
