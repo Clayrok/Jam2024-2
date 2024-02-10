@@ -1991,6 +1991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BatteryReceptor: {fileID: 967194157}
   m_ShootDelay: 3
+  m_AutoAimRange: 20
 --- !u!65 &1668848539
 BoxCollider:
   m_ObjectHideFlags: 0
