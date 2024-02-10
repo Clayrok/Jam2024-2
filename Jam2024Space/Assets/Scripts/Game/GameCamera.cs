@@ -11,32 +11,25 @@ public class GameCamera : MonoBehaviour
     private float m_ZoomStep = 0.1f;
 
     [SerializeField]
+    private float m_CameraAngleDegrees = 45f;
+
+    [SerializeField]
     private float m_MinCameraDistance = 1f;
 
     [SerializeField]
     private float m_MaxCameraDistance = 5f;
 
     [SerializeField]
-    private float m_DistanceY = 5f;
+    private float m_CameraDistance = 10f;
 
-    [SerializeField]
-    private float m_DistanceZ = 5f;
-
-    private Vector3 m_CurrentOffset = Vector3.zero;
-
-
-    private void Start()
-    {
-        m_CurrentOffset = new Vector3(0, m_DistanceY, -m_DistanceZ);
-    }
 
     private void LateUpdate()
     {
-        Vector3 offset = m_CurrentOffset;
-        offset = Quaternion.FromToRotation(Vector3.forward, m_TargetToFollow.transform.forward) * offset;
-
+        Quaternion cameraRotation = Quaternion.AngleAxis(m_CameraAngleDegrees, m_TargetToFollow.transform.right);
+        Vector3 offset = cameraRotation * (-m_TargetToFollow.transform.forward);
+        offset = offset.normalized * m_CameraDistance;
         transform.position = m_TargetToFollow.transform.position + offset;
-        transform.forward = m_TargetToFollow.transform.position - transform.position;
+        transform.rotation = cameraRotation * Quaternion.FromToRotation(Vector3.forward, m_TargetToFollow.transform.forward);
     }
 
     private void Update()
@@ -48,22 +41,22 @@ public class GameCamera : MonoBehaviour
     {
         if (InputManager.ZoomIn)
         {
-            m_CurrentOffset /= m_ZoomStep;
+            m_CameraDistance /= m_ZoomStep;
         }
 
         if (InputManager.ZoomOut)
         {
-            m_CurrentOffset *= m_ZoomStep;
+            m_CameraDistance *= m_ZoomStep;
         }
 
-        if (m_CurrentOffset.magnitude < m_MinCameraDistance)
+        if (m_CameraDistance < m_MinCameraDistance)
         {
-            m_CurrentOffset = m_CurrentOffset.normalized * m_MinCameraDistance;
+            m_CameraDistance = m_MinCameraDistance;
         }
 
-        if (m_CurrentOffset.magnitude > m_MaxCameraDistance)
+        if (m_CameraDistance > m_MaxCameraDistance)
         {
-            m_CurrentOffset = m_CurrentOffset.normalized * m_MaxCameraDistance;
+            m_CameraDistance = m_MaxCameraDistance;
         }
     }
 }

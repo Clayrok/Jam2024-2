@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 4638384613795415197}
   - component: {fileID: 5896053959410956444}
   - component: {fileID: 8745327182392200787}
-  - component: {fileID: 222069847409039538}
+  - component: {fileID: 4668214926375141478}
   - component: {fileID: 1641619301881601042}
   m_Layer: 6
   m_Name: Player
@@ -168,7 +168,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.12, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6937001837318475068}
@@ -273,8 +273,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!65 &222069847409039538
-BoxCollider:
+--- !u!136 &4668214926375141478
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -288,12 +288,14 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 1
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 1.5}
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1641619301881601042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,9 +310,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   c_FetchRange: {fileID: 1262336597320207073}
   c_rigidbody: {fileID: 8745327182392200787}
-  m_Collider: {fileID: 5896053959410956444}
+  m_CapsuleCollider: {fileID: 4668214926375141478}
   fetchPosition: {fileID: 1529393541711271119}
-  baseSpeed: 2.5
+  baseSpeed: 4.5
+  m_RotationSpeed: 500
   m_AccelerationCurve:
     serializedVersion: 2
     m_Curve:
@@ -337,7 +340,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   actionDuration: 2
   fetchDuration: 1
-  m_InteractionRange: 1
+  m_InteractionRange: 2
   m_Health: 100
   m_Hunger: 100
   m_HungerConsumption: 1

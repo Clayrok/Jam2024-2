@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class PlayerCharacter : MonoBehaviour
 {
@@ -12,13 +15,16 @@ public class PlayerCharacter : MonoBehaviour
     private Rigidbody c_rigidbody;
 
     [SerializeField]
-    private BoxCollider m_Collider;
+    private CapsuleCollider m_CapsuleCollider;
 
     [SerializeField]
     public GameObject fetchPosition;
 
     [SerializeField]
     private float baseSpeed = 5f;
+
+    [SerializeField]
+    private float m_RotationSpeed = 100f;
 
     [SerializeField]
     private AnimationCurve m_AccelerationCurve;
@@ -110,23 +116,36 @@ public class PlayerCharacter : MonoBehaviour
         movement = rotation * movement;
 
         float acceleration = m_AccelerationCurve.Evaluate(m_AccelerationTime);
-
         movement = movement * acceleration * m_CurrentSpeed * Time.deltaTime;
+
+        ComputeSphereCastMovement(ref movement);
 
         if (movement != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movement, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, Time.deltaTime * 1000f);
-        }
-
-        if (Physics.BoxCast(transform.position, m_Collider.bounds.extents / 2f, movement.normalized, out RaycastHit hitInfo, Quaternion.LookRotation(movement, Vector3.up), movement.magnitude + m_Collider.bounds.extents.z / 2f, ~(LayerMask.GetMask("Player"))))
-        {
-            movement += hitInfo.normal * movement.magnitude;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, Time.deltaTime * m_RotationSpeed);
         }
 
         transform.Translate(movement, Space.World);
 
         m_IsMoving = movement.sqrMagnitude > 0;
+    }
+
+    private void ComputeSphereCastMovement(ref Vector3 _Movement)
+    {
+        if (_Movement.sqrMagnitude == 0)
+        {
+            return;
+        }
+
+        float capsuleColliderRadius = m_CapsuleCollider.radius;
+        Vector3 capsuleBottomSpherePos = transform.position - transform.up * (m_CapsuleCollider.height / 2f - capsuleColliderRadius);
+        Vector3 capsuleTopSpherePos = transform.position + transform.up * (m_CapsuleCollider.height / 2f - capsuleColliderRadius);
+
+        if (Physics.CapsuleCast(capsuleBottomSpherePos, capsuleTopSpherePos, capsuleColliderRadius, _Movement.normalized, out RaycastHit hitInfo, _Movement.magnitude, ~(LayerMask.GetMask("Player"))))
+        {
+            _Movement += hitInfo.normal * _Movement.magnitude;
+        }
     }
 
     private void Interact()
