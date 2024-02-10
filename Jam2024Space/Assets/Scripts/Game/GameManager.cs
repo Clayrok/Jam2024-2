@@ -13,7 +13,12 @@ public class GameManager : MonoBehaviour
     private Ship m_Ship = null;
 
     [SerializeField]
-    private GameCamera m_Camera = null;
+    private GameCamera m_GameCamera = null;
+
+    [SerializeField]
+    private GameUI m_GameUI = null;
+
+
 
     private List<Interactable> m_Interactables = new List<Interactable>();
 
@@ -83,9 +88,14 @@ public class GameManager : MonoBehaviour
         return m_Ship;
     }
 
-    public GameCamera GetCamera()
+    public GameCamera GetGameCamera()
     {
-        return m_Camera;
+        return m_GameCamera;
+    }
+
+    public GameUI GetGameUI()
+    {
+        return m_GameUI;
     }
 
     public static GameManager Get()

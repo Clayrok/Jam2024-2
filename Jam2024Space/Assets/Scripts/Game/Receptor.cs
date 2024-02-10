@@ -7,59 +7,62 @@ public abstract class Receptor : Interactable
     [SerializeField]
     private GameObject m_PlacementPoint = null;
 
-    private Interactable m_PlacedInteractable = null;
+    private Pickable m_PlacedPickable = null;
 
-    private bool m_IsInteractedKinematicWhenPlaced = false;
+    private bool m_WasPickableKinematicWhenPlaced = false;
 
 
-    public bool TryPlaceInteractable(Interactable _Interactable)
+    public bool TryPlacePickable(Pickable _Pickable)
     {
-        if (!GetIsInteractableCompatible(_Interactable))
+        if (!GetIsPickableCompatible(_Pickable))
         {
             return false;
         }
 
-        m_PlacedInteractable = _Interactable;
+        m_PlacedPickable = _Pickable;
 
-        if (_Interactable.TryGetComponent(out Rigidbody rigidbody))
+        if (_Pickable.TryGetComponent(out Rigidbody rigidbody))
         {
-            m_IsInteractedKinematicWhenPlaced = rigidbody.isKinematic;
+            m_WasPickableKinematicWhenPlaced = rigidbody.isKinematic;
             rigidbody.isKinematic = true;
         }
 
-        _Interactable.transform.position = m_PlacementPoint.transform.position;
-        _Interactable.transform.rotation = m_PlacementPoint.transform.rotation;
+        _Pickable.transform.position = m_PlacementPoint.transform.position;
+        _Pickable.transform.rotation = m_PlacementPoint.transform.rotation;
+
+        _Pickable.SetIsInReceptor(true);
 
         return true;
     }
 
-    public Interactable TakeInteractable()
+    public Pickable TakePickable()
     {
-        if (!m_PlacedInteractable)
+        if (!m_PlacedPickable)
         {
             return null;
         }
 
-        if (m_PlacedInteractable.TryGetComponent(out Rigidbody rigidbody))
+        if (m_PlacedPickable.TryGetComponent(out Rigidbody rigidbody))
         {
-            rigidbody.isKinematic = m_IsInteractedKinematicWhenPlaced;
+            rigidbody.isKinematic = m_WasPickableKinematicWhenPlaced;
         }
 
-        Interactable interactable = m_PlacedInteractable;
-        m_PlacedInteractable = null;
+        Pickable pickable = m_PlacedPickable;
+        m_PlacedPickable = null;
+        pickable.SetIsInReceptor(false);
 
-        return interactable;
+        return pickable;
     }
 
-    public abstract bool GetIsInteractableCompatible(Interactable _Interactable);
+    public abstract bool GetIsPickableCompatible(Pickable _Pickable);
 
-    public T GetPlacedInteractable<T>() where T : Interactable
+    public Pickable GetPlacedPickable()
     {
-        return m_PlacedInteractable as T;
+        return m_PlacedPickable;
     }
 
     public bool GetIsEmpty()
     {
-        return m_PlacedInteractable == null;
+        return m_PlacedPickable == null;
     }
 }

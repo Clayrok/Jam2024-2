@@ -7,6 +7,8 @@ public class Pickable : Interactable
 {
     private float m_PosY = 0f;
 
+    private bool m_IsInReceptor = false;
+
 
     public void OnPicked()
     {
@@ -21,5 +23,20 @@ public class Pickable : Interactable
     public override void Interact(PlayerCharacter _Player)
     {
         
+    }
+
+    public override InteractionType GetInteractionType()
+    {
+        return InteractionType.Trigger;
+    }
+
+    public void SetIsInReceptor(bool _State)
+    {
+        m_IsInReceptor = _State;
+    }
+
+    public bool IsInReceptor()
+    {
+        return m_IsInReceptor;
     }
 }

@@ -308,11 +308,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb39835e933f89419fac75f7e762c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  c_FetchRange: {fileID: 1262336597320207073}
-  c_rigidbody: {fileID: 8745327182392200787}
   m_CapsuleCollider: {fileID: 4668214926375141478}
-  fetchPosition: {fileID: 1529393541711271119}
-  baseSpeed: 4.5
+  m_FetchPosition: {fileID: 1529393541711271119}
+  m_BaseSpeed: 4.5
   m_RotationSpeed: 500
   m_AccelerationCurve:
     serializedVersion: 2
@@ -338,8 +336,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  actionDuration: 2
-  fetchDuration: 1
+  m_ActionDuration: 2
+  m_FetchDuration: 1
   m_InteractionRange: 2
   m_Health: 100
   m_Hunger: 100

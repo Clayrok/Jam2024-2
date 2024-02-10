@@ -12,6 +12,8 @@ public static class InputManager
 
     public static bool Right => Input.GetKey(KeyCode.D);
 
+    public static bool Interact => Input.GetKeyDown(KeyCode.E);
+
     public static bool ZoomIn => Input.GetAxisRaw("Mouse ScrollWheel") > 0;
 
     public static bool ZoomOut => Input.GetAxisRaw("Mouse ScrollWheel") < 0;

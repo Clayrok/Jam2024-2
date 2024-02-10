@@ -9,26 +9,26 @@ public class BatteryReceptor : Receptor
 
     private void Update()
     {
-        Battery battery = GetPlacedInteractable<Battery>();
+        Battery battery = GetPlacedPickable() as Battery;
         if (battery)
         {
             battery.Drain(m_PowerConsumption * Time.deltaTime);
         }
     }
 
-    public override void Interact(PlayerCharacter _Player)
-    {
-        
-    }
-
     public bool GetIsPowered()
     {
-        Battery battery = GetPlacedInteractable<Battery>();
+        Battery battery = GetPlacedPickable() as Battery;
         return battery && battery.GetHasPower();
     }
 
-    public override bool GetIsInteractableCompatible(Interactable _Interactable)
+    public override bool GetIsPickableCompatible(Pickable _Pickable)
     {
-        return _Interactable is Battery;
+        return _Pickable is Battery;
+    }
+
+    public override InteractionType GetInteractionType()
+    {
+        return InteractionType.Trigger;
     }
 }

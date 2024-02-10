@@ -14,17 +14,21 @@ public class Kitchen : Interactable
             return;
         }
 
-        if (m_InteractionPlayer.GetIsMoving())
-        {
-            m_InteractionPlayer = null;
-            return;
-        }
-
         m_InteractionPlayer.Feed();
     }
 
     public override void Interact(PlayerCharacter _Player)
     {
         m_InteractionPlayer = _Player;
+    }
+
+    public override void StopInteraction(PlayerCharacter _Player)
+    {
+        m_InteractionPlayer = null;
+    }
+
+    public override InteractionType GetInteractionType()
+    {
+        return InteractionType.Stay;
     }
 }
